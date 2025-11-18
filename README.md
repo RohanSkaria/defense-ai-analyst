@@ -75,33 +75,21 @@ pnpm dev
 
 The app will be available at [http://localhost:3000](http://localhost:3000)
 
-## Running Tests
+## Building Packages
+
+To build all backend packages:
 
 ```bash
-# Run all tests
-pnpm test
-
-# Run tests for specific package
-pnpm --filter @defense/schema test
-pnpm --filter @defense/graph-store test
-pnpm --filter @defense/ingestion test
-pnpm --filter @defense/analyst test
-pnpm --filter @defense/validation test
-
-# Build all packages
 pnpm build
 ```
 
-## Integration Tests
-
-Integration tests with real LLM calls require an Anthropic API key:
+To build a specific package:
 
 ```bash
-export ANTHROPIC_API_KEY=your_key_here
-pnpm vitest run
+pnpm --filter @defense/graph-store build
+pnpm --filter @defense/ingestion build
+pnpm --filter @defense/analyst build
 ```
-
-Without an API key, the LLM-dependent tests will be skipped, but mocked tests will run.
 
 ## Usage Examples
 
