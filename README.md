@@ -4,12 +4,11 @@ A **Defense Knowledge Graph + AI Analyst Agent** for processing and analyzing de
 
 ## Features
 
-- **Ingestion Mode**: Extract entities and relationships from defense documents into a knowledge graph
-- **Analyst Mode**: Answer questions using structured reasoning over the knowledge graph
-- **Validation Mode**: Check graph integrity and identify issues
-- **Interactive Graph Visualization**: Explore the knowledge graph with React Flow
-- **Real-time Chat Interface**: Multi-mode chat powered by Vercel AI SDK
-- **Dashboard Analytics**: View metrics and validation reports
+- **Document Ingestion**: Extract entities and relationships from defense documents into a persistent knowledge graph
+- **Interactive Graph Visualization**: Explore with filtering, search, deep linking, collapsible controls, and interactive minimap
+- **AI-Powered Q&A**: Answer questions using structured reasoning over the knowledge graph with animated loading states
+- **Dashboard Analytics**: Clickable analytics with contractor portfolios, system hierarchies, and intelligent question answering
+- **Persistent Storage**: Neon Postgres database for reliable data persistence across sessions
 
 ## Architecture
 
@@ -17,16 +16,16 @@ A **Defense Knowledge Graph + AI Analyst Agent** for processing and analyzing de
 defense-ai-analyst/
 ├── packages/                # Backend packages
 │   ├── schema/              # Zod schemas for entities, relations, and triples
-│   ├── graph-store/         # In-memory graph database (graphology)
+│   ├── graph-store/         # Neon Postgres graph database with Drizzle ORM
 │   ├── ingestion/           # LLM-based entity/relation extraction
 │   ├── analyst/             # Question answering engine
 │   └── validation/          # Graph integrity checking
 └── apps/
     └── web/                 # Next.js 15 web application
         ├── app/
-        │   ├── chat/        # Multi-mode chat interface
-        │   ├── graph/       # Interactive graph visualization
-        │   ├── dashboard/   # Analytics and metrics
+        │   ├── page.tsx     # Home page with document ingestion
+        │   ├── graph/       # Interactive graph visualization with filtering
+        │   ├── dashboard/   # Clickable analytics and AI Q&A
         │   └── api/         # Backend API routes
         └── components/      # React components (shadcn/ui)
 ```
@@ -50,8 +49,23 @@ pnpm build
 ```bash
 cd apps/web
 cp .env.example .env.local
-# Edit .env.local and add your ANTHROPIC_API_KEY
 ```
+
+Edit `.env.local` and add:
+
+```bash
+# Required: Anthropic API Key for Claude
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# Required: Neon Postgres Database URL
+DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+```
+
+To set up your Neon database:
+1. Create a free account at [neon.tech](https://neon.tech)
+2. Create a new project
+3. Copy the connection string from the Neon dashboard
+4. Paste it as your `DATABASE_URL` in `.env.local`
 
 ### 4. Run the Web App
 
@@ -91,28 +105,29 @@ Without an API key, the LLM-dependent tests will be skipped, but mocked tests wi
 
 ## Usage Examples
 
-### Ingestion Mode
+### Document Ingestion
 
 ```typescript
 import { TripleExtractor } from '@defense/ingestion';
-import { GraphStore } from '@defense/graph-store';
+import { PostgresGraph } from '@defense/graph-store';
 
 const extractor = new TripleExtractor(process.env.ANTHROPIC_API_KEY);
-const graph = new GraphStore();
+const graph = new PostgresGraph(process.env.DATABASE_URL);
 
 // Extract from defense text
 const text = "Raytheon Technologies provides the AN/SPY-6 radar for DDG-51 Flight III destroyers.";
 const result = await extractor.extractTriples(text);
 
-// Add to graph
-result.triples.forEach((triple) => {
-  graph.addNode(triple.a, triple.type_a);
-  graph.addNode(triple.b, triple.type_b);
-  graph.addEdge(triple.a, triple.b, triple.relation, triple.confidence);
+// Add to persistent graph (stored in Postgres)
+await graph.addDocument({
+  title: "AN/SPY-6 Information",
+  content: text,
+  source: "Defense News",
+  triples: result.triples
 });
 ```
 
-### Analyst Mode
+### AI Q&A
 
 ```typescript
 import { DefenseAnalyst } from '@defense/analyst';
@@ -129,12 +144,12 @@ console.log(response.key_findings);
 console.log(response.evidence);
 ```
 
-### Validation Mode
+### Validation
 
 ```typescript
 import { validateGraph } from '@defense/validation';
 
-const report = validateGraph(graph);
+const report = await validateGraph(graph);
 
 console.log(`Total entities: ${report.validation_results.total_entities}`);
 console.log(`Total relations: ${report.validation_results.total_relations}`);
@@ -144,47 +159,55 @@ console.log('Recommendations:', report.recommendations);
 
 ## Web Application Usage
 
-### Chat Interface
+### Home Page (Document Ingestion)
 
-Navigate to `/chat` to access the multi-mode chat interface:
-
-1. **Chat Mode** (💬): General conversation about defense topics
-2. **Ingest Mode** (📥): Paste defense documents to extract entities and relations
-3. **Analyze Mode** (🔍): Ask questions about the knowledge graph
-4. **Validate Mode** (✅): Check graph integrity and get recommendations
+Navigate to `/` to:
+- Paste defense documents in the text area
+- Click "Process Document" to extract entities and relationships
+- View extracted triples with confidence scores
+- Data is automatically saved to Neon Postgres
 
 ### Graph Visualization
 
 Navigate to `/graph` to:
 - View an interactive visualization of the knowledge graph
-- Pan, zoom, and explore entity relationships
-- See entity types color-coded
-- Click nodes to view details
+- **Filter** by entity type (Program, Contractor, System, etc.)
+- **Search** for specific entities by name
+- **Focus** on individual nodes and their connections
+- **Navigate** via interactive minimap (pan and zoom)
+- **Deep link** from dashboard analytics by clicking entity names
+- **Collapsible controls** to maximize graph viewing area
+- **"Back to Full View"** button to reset filters and focus
 
 ### Dashboard
 
 Navigate to `/dashboard` to:
-- View total entities and relations count
-- See orphan node statistics
-- Get validation recommendations
-- Monitor graph health
+- View **Contractor Portfolios** with system counts (all clickable → navigates to graph)
+- Explore **System Hierarchies** showing Program → System → Subsystem relationships (all clickable)
+- See **Entity Type Distribution** and **Relationship Type Distribution**
+- **Ask Intelligence Questions** with AI-powered Q&A over the knowledge graph
+- Animated loading states show progress through entity extraction, graph traversal, and Claude analysis
 
 ## Sample Data
 
-Example defense documents are provided in [`examples/defense-samples/`](examples/defense-samples/):
-- `raytheon-spy6.txt` - AN/SPY-6 radar system
-- `golden-dome.txt` - Golden Dome hypersonic defense program
+A comprehensive test document is provided in [`test-ingestion-sample.txt`](test-ingestion-sample.txt) covering:
+- NGAD (Next Generation Air Dominance) program
+- B-21 Raider stealth bomber
+- F-35 Block 4 modernization
+- Collaborative Combat Aircraft (CCA)
+- Hypersonic weapons (AGM-183A ARRW)
+- MQ-25 Stingray refueling drone
 
-Try pasting these into the Chat → Ingest mode!
+Try pasting this into the Home page to test the ingestion pipeline!
 
 ## Technology Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript
 - **UI Components**: shadcn/ui (Radix UI + Tailwind CSS)
-- **Graph Visualization**: React Flow
-- **Data Tables**: TanStack Table
-- **AI Integration**: Vercel AI SDK + Anthropic Claude
-- **Backend**: TypeScript packages (graphology, Zod)
+- **Graph Visualization**: React Flow with interactive minimap and dagre layout
+- **Database**: Neon Postgres (serverless) with Drizzle ORM
+- **AI Integration**: Anthropic Claude (Haiku 4.5 for extraction, Sonnet 3.7 for analysis)
+- **Backend**: TypeScript packages with Zod schemas
 - **Monorepo**: pnpm workspaces + Turbo
 
 ## Schema

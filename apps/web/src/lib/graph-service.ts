@@ -104,6 +104,10 @@ class GraphService {
     return await this.graph.getAllDocuments();
   }
 
+  async deleteDocument(id: number): Promise<void> {
+    await this.graph.deleteDocument(id);
+  }
+
   async clearGraph(): Promise<void> {
     await this.graph.clear();
   }

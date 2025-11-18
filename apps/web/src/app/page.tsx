@@ -282,18 +282,58 @@ export default function Home() {
                     {recentDocs.slice(0, 5).map((doc) => (
                       <div
                         key={doc.id}
-                        className="p-2 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer"
-                        onClick={() => {
-                          setText(doc.content);
-                          setFilename(doc.filename);
-                        }}
+                        className="p-2 border border-gray-200 rounded hover:bg-gray-50 group"
                       >
-                        <div className="text-sm font-medium text-gray-900 truncate">
-                          {doc.filename}
-                        </div>
-                        <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
-                          <span>{doc.tripleCount} triples</span>
-                          <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                        <div className="flex items-start justify-between gap-2">
+                          <div
+                            className="flex-1 cursor-pointer"
+                            onClick={() => {
+                              setText(doc.content);
+                              setFilename(doc.filename);
+                            }}
+                          >
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {doc.filename}
+                            </div>
+                            <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
+                              <span>{doc.tripleCount} triples</span>
+                              <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (confirm(`Delete "${doc.filename}"? This will permanently remove the document and all its extracted relationships. Entities with no remaining connections will also be removed.`)) {
+                                try {
+                                  const res = await fetch(`/api/documents?id=${doc.id}`, {
+                                    method: "DELETE",
+                                  });
+                                  if (res.ok) {
+                                    // Refresh documents list
+                                    const docsRes = await fetch("/api/documents");
+                                    const docsData = await docsRes.json();
+                                    setRecentDocs(docsData.documents || []);
+
+                                    // Refresh stats
+                                    const statsRes = await fetch("/api/stats");
+                                    const statsData = await statsRes.json();
+                                    setStats(statsData.stats);
+                                  } else {
+                                    alert("Failed to delete document");
+                                  }
+                                } catch (error) {
+                                  console.error("Delete error:", error);
+                                  alert("Failed to delete document");
+                                }
+                              }
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-red-600 hover:bg-red-50 rounded transition-opacity"
+                            title="Delete document"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     ))}

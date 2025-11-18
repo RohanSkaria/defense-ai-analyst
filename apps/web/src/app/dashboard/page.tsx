@@ -10,13 +10,24 @@ export default function DashboardPage() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
+  const loadInsights = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch("/api/insights");
+      const data = await res.json();
+      setInsights(data);
+    } catch (error) {
+      console.error("Failed to load insights:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    fetch("/api/insights")
-      .then(res => res.json())
-      .then(data => setInsights(data))
-      .catch(console.error);
+    loadInsights();
   }, []);
 
   const handleAskQuestion = async () => {
@@ -67,6 +78,13 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={loadInsights}
+                disabled={refreshing}
+              >
+                {refreshing ? "Refreshing..." : "Refresh Data"}
+              </Button>
               <Button variant="outline" onClick={() => router.push("/")}>
                 Ingest Data
               </Button>

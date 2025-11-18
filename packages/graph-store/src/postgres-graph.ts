@@ -315,4 +315,42 @@ export class PostgresGraphStore {
   async getAllDocuments() {
     return await this.db.select().from(documents).orderBy(sql`${documents.uploadedAt} DESC`);
   }
+
+  /**
+   * Delete a document by ID
+   * Cascades to delete all relationships from this document, then cleans up orphaned entities
+   */
+  async deleteDocument(id: number): Promise<void> {
+    // First, get all entities that are referenced by relationships from this document
+    const affectedRelationships = await this.db.select({
+      sourceEntity: relationships.sourceEntity,
+      targetEntity: relationships.targetEntity,
+    })
+      .from(relationships)
+      .where(eq(relationships.sourceDocumentId, id));
+
+    const affectedEntityIds = new Set<string>();
+    affectedRelationships.forEach(rel => {
+      affectedEntityIds.add(rel.sourceEntity);
+      affectedEntityIds.add(rel.targetEntity);
+    });
+
+    // Delete the document (cascade will delete relationships automatically)
+    await this.db.delete(documents).where(eq(documents.id, id));
+
+    // Now clean up orphaned entities (entities with no remaining relationships)
+    for (const entityId of affectedEntityIds) {
+      const remainingRelations = await this.db.select({ count: sql<number>`count(*)` })
+        .from(relationships)
+        .where(
+          sql`${relationships.sourceEntity} = ${entityId} OR ${relationships.targetEntity} = ${entityId}`
+        );
+
+      const count = Number(remainingRelations[0].count);
+      if (count === 0) {
+        // This entity has no more relationships, delete it
+        await this.db.delete(entities).where(eq(entities.id, entityId));
+      }
+    }
+  }
 }

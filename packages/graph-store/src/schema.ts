@@ -21,7 +21,7 @@ export const relationships = pgTable('relationships', {
   targetEntity: text('target_entity').notNull().references(() => entities.id, { onDelete: 'cascade' }),
   relation: text('relation').notNull(),
   confidence: real('confidence').notNull(),
-  sourceDocumentId: integer('source_document_id').references(() => documents.id, { onDelete: 'set null' }),
+  sourceDocumentId: integer('source_document_id').references(() => documents.id, { onDelete: 'cascade' }),
   sourceText: text('source_text'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
