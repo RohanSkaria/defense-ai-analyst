@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -85,6 +86,7 @@ function getLayoutedElements(nodes: Node[], edges: Edge[]): Node[] {
 }
 
 function GraphViewerInner() {
+  const searchParams = useSearchParams();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
   const [allEdges, setAllEdges] = useState<Edge[]>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -152,6 +154,35 @@ function GraphViewerInner() {
 
     loadGraph();
   }, [setNodes, setEdges]);
+
+  // Apply URL parameters after graph loads
+  useEffect(() => {
+    if (allNodes.length === 0 || loading) return;
+
+    const focusParam = searchParams.get('focus');
+    const searchParam = searchParams.get('search');
+    const typeParam = searchParams.get('type');
+
+    if (focusParam) {
+      // Check if the entity exists in the graph
+      const entityExists = allNodes.some(n => n.id === focusParam);
+      if (entityExists) {
+        setFocusNode(focusParam);
+        setControlsVisible(true); // Show controls so user can see what's focused
+      }
+    }
+
+    if (searchParam) {
+      setSearchTerm(searchParam);
+      setControlsVisible(true);
+    }
+
+    if (typeParam) {
+      const types = typeParam.split(',');
+      setSelectedTypes(new Set(types));
+      setControlsVisible(true);
+    }
+  }, [allNodes, loading, searchParams]);
 
   // Filter nodes and edges based on search, type filter, and focus
   useEffect(() => {
@@ -365,6 +396,19 @@ function GraphViewerInner() {
         </div>
       </div>
 
+      {/* Back to Full View Button */}
+      {(focusNode || searchTerm || !selectedTypes.has("all")) && (
+        <button
+          onClick={resetView}
+          className="absolute bottom-4 left-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span className="font-medium">Back to Full View</span>
+        </button>
+      )}
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -377,6 +421,8 @@ function GraphViewerInner() {
         <Controls />
         <MiniMap
           nodeColor={nodeColor}
+          pannable
+          zoomable
           style={{ height: 150, width: 200 }}
           className="border-2 border-gray-300"
         />

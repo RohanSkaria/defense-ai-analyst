@@ -126,7 +126,10 @@ export default function DashboardPage() {
                   <div className="space-y-3">
                     {insights.contractors.map((contractor: any, i: number) => (
                       <div key={i} className="border border-gray-200 rounded p-3">
-                        <div className="flex items-center justify-between mb-2">
+                        <div
+                          className="flex items-center justify-between mb-2 cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() => router.push(`/graph?focus=${encodeURIComponent(contractor.name)}`)}
+                        >
                           <span className="font-medium text-gray-900">{contractor.name}</span>
                           <span className="text-sm text-blue-600 font-medium">{contractor.systemCount} systems</span>
                         </div>
@@ -134,7 +137,8 @@ export default function DashboardPage() {
                           {contractor.systems.map((system: string, j: number) => (
                             <span
                               key={j}
-                              className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+                              onClick={() => router.push(`/graph?focus=${encodeURIComponent(system)}`)}
+                              className="text-xs bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 px-2 py-1 rounded cursor-pointer transition-colors"
                             >
                               {system}
                             </span>
@@ -160,15 +164,29 @@ export default function DashboardPage() {
                   <div className="space-y-4">
                     {insights.hierarchies.map((hierarchy: any, i: number) => (
                       <div key={i} className="border-l-4 border-amber-500 pl-4">
-                        <div className="font-semibold text-gray-900 mb-2">{hierarchy.program}</div>
+                        <div
+                          className="font-semibold text-gray-900 mb-2 cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() => router.push(`/graph?focus=${encodeURIComponent(hierarchy.program)}`)}
+                        >
+                          {hierarchy.program}
+                        </div>
                         <div className="space-y-2 ml-4">
                           {hierarchy.systems.map((system: any, j: number) => (
                             <div key={j}>
-                              <div className="text-sm text-gray-700">└─ {system.name}</div>
+                              <div
+                                className="text-sm text-gray-700 cursor-pointer hover:text-blue-600 transition-colors"
+                                onClick={() => router.push(`/graph?focus=${encodeURIComponent(system.name)}`)}
+                              >
+                                └─ {system.name}
+                              </div>
                               {system.subsystems && system.subsystems.length > 0 && (
                                 <div className="ml-4 space-y-1">
                                   {system.subsystems.map((sub: string, k: number) => (
-                                    <div key={k} className="text-xs text-gray-500">
+                                    <div
+                                      key={k}
+                                      className="text-xs text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
+                                      onClick={() => router.push(`/graph?focus=${encodeURIComponent(sub)}`)}
+                                    >
                                       └─ {sub}
                                     </div>
                                   ))}
@@ -236,7 +254,32 @@ export default function DashboardPage() {
                   {loading ? "Analyzing..." : "Ask Question"}
                 </Button>
 
-                {answer && (
+                {loading && (
+                  <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="relative">
+                        <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      </div>
+                      <p className="text-sm font-medium text-blue-900">Analyzing Knowledge Graph</p>
+                    </div>
+                    <div className="space-y-2 text-xs text-blue-700">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></div>
+                        <span>Extracting entities from question...</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <span>Traversing knowledge graph...</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        <span>Generating analysis with Claude...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {answer && !loading && (
                   <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm">
                     <p className="font-medium text-gray-900 mb-2">Analysis:</p>
                     <p className="text-gray-700 text-xs leading-relaxed">{answer.analysis}</p>

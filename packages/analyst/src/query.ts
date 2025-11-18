@@ -23,9 +23,11 @@ export class DefenseAnalyst {
   ): Promise<AnalystResponse> {
     // Step 1: Extract key entities from question
     const entities = await this.extractEntitiesFromQuestion(question, graph);
+    console.log(`[Analyst] Extracted ${entities.length} entities:`, entities);
 
     // Step 2: Retrieve relevant subgraph (start with 1-hop, expand if needed)
-    const subgraph = this.retrieveRelevantSubgraph(entities, graph);
+    const subgraph = await this.retrieveRelevantSubgraph(entities, graph);
+    console.log(`[Analyst] Retrieved subgraph with ${subgraph.nodes.length} nodes and ${subgraph.edges.length} edges`);
 
     // Step 3: Generate analysis using LLM
     const response = await this.generateAnalysis(question, subgraph);
@@ -40,14 +42,27 @@ export class DefenseAnalyst {
     question: string,
     graph: GraphStore
   ): Promise<string[]> {
-    const allNodes = graph.getAllNodes();
+    const allNodes = await graph.getAllNodes();
     const entityNames = allNodes.map((n) => n.id);
 
-    // Simple keyword matching (case-insensitive)
+    // Improved fuzzy keyword matching (bidirectional, case-insensitive)
     const lowerQuestion = question.toLowerCase();
-    const foundEntities = entityNames.filter((name) =>
-      lowerQuestion.includes(name.toLowerCase())
-    );
+    const foundEntities = entityNames.filter((name) => {
+      const lowerName = name.toLowerCase();
+
+      // Match if entity name is in question OR question keywords are in entity name
+      if (lowerQuestion.includes(lowerName)) {
+        return true;
+      }
+
+      // Split entity name into significant words (ignore common words)
+      const nameWords = lowerName
+        .split(/[\s\-\/\_]+/) // Added underscore to split pattern
+        .filter(w => w.length > 2); // Ignore short words like "of", "a", etc.
+
+      // Check if any significant word from entity appears in question
+      return nameWords.some(word => lowerQuestion.includes(word));
+    });
 
     return foundEntities;
   }
@@ -55,10 +70,10 @@ export class DefenseAnalyst {
   /**
    * Retrieve relevant subgraph starting from identified entities
    */
-  private retrieveRelevantSubgraph(
+  private async retrieveRelevantSubgraph(
     startEntities: string[],
     graph: GraphStore
-  ): TraversalResult {
+  ): Promise<TraversalResult> {
     if (startEntities.length === 0) {
       // No specific entities found, return empty result
       return { nodes: [], edges: [] };
@@ -70,7 +85,7 @@ export class DefenseAnalyst {
 
     for (const entityId of startEntities) {
       try {
-        const result = graph.traverse(entityId, 2);
+        const result = await graph.traverse(entityId, 2);
 
         result.nodes.forEach((node) => allNodes.set(node.id, node));
         result.edges.forEach((edge) => {

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraphViewer } from "@/components/graph-viewer";
 
@@ -15,7 +16,9 @@ export default function GraphPage() {
         </CardHeader>
         <CardContent>
           <div className="h-[600px] border rounded-md">
-            <GraphViewer />
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center">Loading graph...</div>}>
+              <GraphViewer />
+            </Suspense>
           </div>
         </CardContent>
       </Card>
