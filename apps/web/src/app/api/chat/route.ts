@@ -7,11 +7,33 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const { messages, mode, filename } = await req.json();
+    // Parse and validate request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const { messages, mode, filename } = body;
+
+    // Validate required fields
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or missing messages array" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      return new Response("ANTHROPIC_API_KEY not configured", { status: 500 });
+      return new Response(
+        JSON.stringify({ error: "Service temporarily unavailable" }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     const anthropic = createAnthropic({ apiKey });
@@ -29,7 +51,27 @@ export async function POST(req: Request) {
       // Legacy format
       userInput = lastMessage.content;
     } else {
-      return new Response("Invalid message format", { status: 400 });
+      return new Response(
+        JSON.stringify({ error: "Invalid message format" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate input size (10MB limit as configured in next.config.ts)
+    const maxInputSize = 10 * 1024 * 1024; // 10MB
+    if (userInput.length > maxInputSize) {
+      return new Response(
+        JSON.stringify({ error: "Input text exceeds maximum size of 10MB" }),
+        { status: 413, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate mode if provided
+    if (mode && !["ingest", "analyze", "validate"].includes(mode)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid mode. Must be 'ingest', 'analyze', or 'validate'" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     // Handle different modes
@@ -91,9 +133,17 @@ export async function POST(req: Request) {
 
     return response.toTextStreamResponse();
   } catch (error) {
+    // Log detailed error server-side only
     console.error("Chat API error:", error);
+
+    // Return generic error message to client (don't expose internal details)
+    const isDevMode = process.env.NODE_ENV === "development";
+    const errorMessage = isDevMode && error instanceof Error
+      ? error.message  // Show details in development
+      : "An error occurred processing your request"; // Generic in production
+
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

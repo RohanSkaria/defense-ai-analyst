@@ -29,7 +29,16 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await graphService.deleteDocument(parseInt(id, 10));
+    // Validate that ID is a valid integer
+    const documentId = parseInt(id, 10);
+    if (isNaN(documentId) || documentId < 1) {
+      return NextResponse.json(
+        { error: "Invalid document ID" },
+        { status: 400 }
+      );
+    }
+
+    await graphService.deleteDocument(documentId);
 
     return NextResponse.json({
       success: true,
@@ -37,8 +46,15 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error("Document deletion error:", error);
+
+    // Don't expose internal error details in production
+    const isDevMode = process.env.NODE_ENV === "development";
+    const errorMessage = isDevMode && error instanceof Error
+      ? error.message
+      : "Failed to delete document";
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

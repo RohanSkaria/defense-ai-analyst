@@ -31,11 +31,42 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type - only accept text files
+    const allowedTypes = ['text/plain', 'text/markdown', 'text/csv', 'application/json'];
+    const allowedExtensions = ['.txt', '.md', '.csv', '.json', '.text'];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+      alert('Invalid file type. Please upload a text file (.txt, .md, .csv, or .json)');
+      e.target.value = ''; // Reset input
+      return;
+    }
+
+    // Validate file size - max 10MB
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert('File is too large. Maximum size is 10MB.');
+      e.target.value = ''; // Reset input
+      return;
+    }
+
     setFilename(file.name);
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
+
+      // Validate content length
+      if (content.length > maxSize) {
+        alert('File content is too large. Maximum size is 10MB.');
+        e.target.value = '';
+        return;
+      }
+
       setText(content);
+    };
+    reader.onerror = () => {
+      alert('Failed to read file. Please try again.');
+      e.target.value = '';
     };
     reader.readAsText(file);
   };
