@@ -1,0 +1,9 @@
+The Golden Dome initiative is a hypersonic defense program managed by the Missile Defense Agency (MDA).
+
+Northrop Grumman and Lockheed Martin are the prime contractors for the Golden Dome interceptor system. The program focuses on developing next-generation interceptor technology to counter hypersonic threats.
+
+Golden Dome is part of the broader Glide Phase Interceptor (GPI) program and depends on advanced sensor technology from Raytheon's SPY-7 radar.
+
+The program reached Milestone B in FY2024 with $500M in funding allocated through PE 0603886C. Initial operational capability is planned for FY2028.
+
+Testing will be conducted at White Sands Missile Range, with developmental testing scheduled for 2025 and operational testing in 2027.

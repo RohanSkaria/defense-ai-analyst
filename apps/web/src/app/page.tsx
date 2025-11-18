@@ -1,0 +1,309 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function Home() {
+  const [text, setText] = useState("");
+  const [filename, setFilename] = useState("Untitled Document");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [recentDocs, setRecentDocs] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const router = useRouter();
+
+  // Load recent documents and stats on mount
+  useEffect(() => {
+    fetch("/api/documents")
+      .then(res => res.json())
+      .then(data => setRecentDocs(data.documents || []))
+      .catch(console.error);
+
+    fetch("/api/stats")
+      .then(res => res.json())
+      .then(data => setStats(data.stats))
+      .catch(console.error);
+  }, []);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFilename(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      setText(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleIngest = async () => {
+    if (!text.trim()) {
+      alert("Please provide text to ingest");
+      return;
+    }
+
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: text }],
+          mode: "ingest",
+          filename,
+        }),
+      });
+
+      const data = await res.json();
+      setResult(data);
+
+      // Refresh recent docs and stats
+      const docsRes = await fetch("/api/documents");
+      const docsData = await docsRes.json();
+      setRecentDocs(docsData.documents || []);
+
+      const statsRes = await fetch("/api/stats");
+      const statsData = await statsRes.json();
+      setStats(statsData.stats);
+    } catch (error) {
+      console.error("Ingestion error:", error);
+      alert("Failed to ingest document");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Defense Knowledge Graph
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Intelligence Analysis System
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard")}
+              >
+                Dashboard
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/graph")}
+              >
+                Graph View
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Ingestion Area */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Document Ingestion</CardTitle>
+                <CardDescription>
+                  Upload defense intelligence documents to extract entities and relationships
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* File Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload File
+                  </label>
+                  <input
+                    type="file"
+                    accept=".txt,.md"
+                    onChange={handleFileUpload}
+                    className="block w-full text-sm text-gray-600
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded file:border-0
+                      file:text-sm file:font-medium
+                      file:bg-gray-100 file:text-gray-700
+                      hover:file:bg-gray-200
+                      cursor-pointer"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Supports .txt and .md files
+                  </p>
+                </div>
+
+                {/* Filename Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Document Name
+                  </label>
+                  <input
+                    type="text"
+                    value={filename}
+                    onChange={(e) => setFilename(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter document name"
+                  />
+                </div>
+
+                {/* Text Area */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Document Text
+                  </label>
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="w-full h-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                    placeholder="Paste defense document text here or upload a file above..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {text.length.toLocaleString()} characters
+                  </p>
+                </div>
+
+                {/* Ingest Button */}
+                <Button
+                  onClick={handleIngest}
+                  disabled={loading || !text.trim()}
+                  className="w-full"
+                  size="lg"
+                >
+                  {loading ? "Processing..." : "Ingest Document"}
+                </Button>
+
+                {/* Results */}
+                {result && result.type === "ingestion" && (
+                  <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
+                    <h3 className="font-semibold text-gray-900 mb-3">
+                      Extraction Complete
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {result.data.triples?.length || 0}
+                        </div>
+                        <div className="text-xs text-gray-600">Relationships</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-green-600">
+                          {result.data.orphan_entities?.length || 0}
+                        </div>
+                        <div className="text-xs text-gray-600">Orphan Entities</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-amber-600">
+                          {result.data.ambiguities?.length || 0}
+                        </div>
+                        <div className="text-xs text-gray-600">Ambiguities</div>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                      <Button
+                        onClick={() => router.push("/dashboard")}
+                        className="flex-1"
+                      >
+                        View Dashboard
+                      </Button>
+                      <Button
+                        onClick={() => router.push("/graph")}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Explore Graph
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar: Stats & Recent Docs */}
+          <div className="space-y-6">
+            {/* Quick Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Knowledge Graph Stats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Total Entities</span>
+                  <span className="font-semibold text-gray-900">
+                    {stats?.totalEntities || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Relationships</span>
+                  <span className="font-semibold text-gray-900">
+                    {stats?.totalRelations || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Documents</span>
+                  <span className="font-semibold text-gray-900">{recentDocs.length}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  View Full Analytics
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Recent Documents */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Recent Ingestions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {recentDocs.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    No documents yet
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {recentDocs.slice(0, 5).map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="p-2 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer"
+                        onClick={() => {
+                          setText(doc.content);
+                          setFilename(doc.filename);
+                        }}
+                      >
+                        <div className="text-sm font-medium text-gray-900 truncate">
+                          {doc.filename}
+                        </div>
+                        <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
+                          <span>{doc.tripleCount} triples</span>
+                          <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

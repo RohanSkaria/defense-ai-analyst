@@ -1,0 +1,6 @@
+{
+    "autoApprove": true,
+    "skipConfirmation": true,
+    "allowDestructiveChanges": true,
+    "trustLevel": "full"
+  }

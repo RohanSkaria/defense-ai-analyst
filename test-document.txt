@@ -1,0 +1,77 @@
+DEFENSE ACQUISITION PROGRAMS: Q4 2024 INTELLIGENCE BRIEFING
+
+NAVAL SURFACE WARFARE SYSTEMS
+
+DDG-51 Arleigh Burke Class Destroyer Program
+
+The Arleigh Burke-class guided-missile destroyer program represents the backbone of the U.S. Navy's surface combatant fleet. In August 2023, the Navy awarded contracts valued at approximately $14.5 billion to HII Ingalls Shipbuilding and General Dynamics Bath Iron Works for construction of ten Flight III destroyers under a five-year multiyear procurement agreement. These advanced warships are overseen by PEO Ships and feature significant technological upgrades over previous flight variants.
+
+The Flight III configuration incorporates the Raytheon AN/SPY-6(V)1 Air and Missile Defense Radar, which provides 30 times greater sensitivity than the legacy AN/SPY-1D radar system. The AN/SPY-6 is capable of detecting objects half the size at twice the distance compared to previous generation systems. This advanced radar system integrates with the Aegis Baseline 10 combat system, which was developed by Lockheed Martin to provide enhanced ballistic missile defense capabilities.
+
+In June 2024, RTX Corporation's Raytheon division received a $677.7 million contract from the Navy for AN/SPY-6(V) radar hardware production. The AN/SPY-6 radar system interfaces with the Aegis weapon system to provide comprehensive air and missile defense for the destroyer platform. HII Ingalls Shipbuilding, located at Pascagoula, Mississippi, serves as one of two shipyards constructing these vessels, while General Dynamics Bath Iron Works operates from Bath, Maine.
+
+The DDG-51 Flight III program depends on multiple critical subsystems beyond the primary radar. The Aegis combat system, developed by Lockheed Martin, provides integrated command and control functionality. The platform requires the MK 41 Vertical Launching System for missile deployment, advanced electronic warfare systems, and modern communications equipment. These destroyers are designed to support operations in contested environments and provide both offensive strike capabilities and defensive protection for carrier strike groups.
+
+TACTICAL AVIATION PROGRAMS
+
+F-35 Lightning II Joint Strike Fighter
+
+The F-35 Joint Strike Fighter program achieved a significant milestone on March 12, 2024, when the F-35A variant received approval for full rate production. Lockheed Martin Aeronautics Company, operating from Fort Worth, Texas, serves as the prime contractor for airframe development and production. In July 2024, Lockheed Martin delivered the 1,000th F-35 to the Wisconsin Air National Guard's 115th Fighter Wing at Truax Field, marking a major production achievement.
+
+However, the program faces delivery challenges. In 2024, Lockheed Martin delivered 110 F-35 aircraft, all of which were late by an average of 238 days, representing a significant increase from the 61-day average delay reported in 2023. These delays impact force structure planning across the Air Force, Navy, and Marine Corps services that operate the F-35A, F-35C, and F-35B variants respectively.
+
+Pratt & Whitney, a subsidiary of RTX Corporation located in East Hartford, Connecticut, manufactures the F135 engine that powers all F-35 variants. In August 2025, Pratt & Whitney received a $2.8 billion contract for Lot 18 F135 engine production. The F135 engine program contributed over $9.1 billion to the U.S. economy in 2024. Pratt & Whitney continues development of the Engine Core Upgrade, which will provide enhanced performance and thermal management capabilities for future F-35 operations.
+
+BAE Systems supplies approximately 15 percent of F-35 components, with production facilities located in the United Kingdom. BAE Systems developed the AN/ASQ-239 Barracuda electronic warfare system, which provides comprehensive electronic attack and protection capabilities. BAE Systems also manufactures the rear fuselage section, tail assemblies, and various avionics components that interface with the aircraft's sensor fusion architecture.
+
+Northrop Grumman manufactures the center fuselage at facilities in Palmdale and El Segundo, California. This critical structural component houses the F-35's internal weapons bay and fuel storage systems. The F-35 program represents international collaboration, with partner nations including the United Kingdom, Italy, Netherlands, Norway, Denmark, Australia, Canada, and others participating in production and procurement.
+
+The F-35A variant serves Air Force requirements for tactical air superiority and strike missions. The F-35B provides the Marine Corps with short takeoff and vertical landing capability for amphibious operations. The F-35C features strengthened landing gear and larger wing surfaces to support carrier operations for the Navy. All three variants share common avionics, mission systems, and the AN/APG-81 AESA radar developed by Northrop Grumman.
+
+PRECISION STRIKE WEAPON SYSTEMS
+
+JASSM and LRASM Programs
+
+Lockheed Martin Missiles and Fire Control develops and produces the Joint Air-to-Surface Standoff Missile (JASSM) family and the Long Range Anti-Ship Missile (LRASM) at facilities in Alabama. In August 2024, the Air Force Life Cycle Management Center at Eglin Air Force Base awarded Lockheed Martin a $130 million contract modification to procure tooling and test equipment necessary to increase production quantities. The contract supports expansion from 550 missiles annually to 1,000 missiles per year to meet growing international and domestic demand.
+
+JASSM-ER provides extended range strike capability for Air Force and allied aircraft, enabling standoff attack against heavily defended targets. The missile depends on autonomous navigation systems, combining GPS with terrain matching technology to achieve precision accuracy. The JASSM family has been integrated on F-16, F-15E, F-35, B-1B, and B-52 aircraft platforms.
+
+LRASM represents an evolution of JASSM-ER technology, specifically designed for anti-ship warfare missions. The Defense Advanced Research Projects Agency (DARPA) initiated LRASM development to provide the Navy and Air Force with advanced maritime strike capabilities. LRASM incorporates a multi-mode passive RF sensor system that enables target detection and discrimination without relying on external targeting data. This capability allows LRASM to operate effectively in GPS-denied and communications-denied environments.
+
+The missile integrates an uprated power system to support extended sensor operation and enhanced maneuverability during terminal engagement phases. LRASM utilizes a new weapon datalink architecture that enables in-flight retargeting and mission updates when communications permit. The missile interfaces with existing aircraft weapon systems through common carriage equipment, minimizing integration costs across multiple platforms.
+
+In July 2024, the Pentagon awarded contracts totaling approximately $7.8 billion for JASSM, LRASM, and AMRAAM production, with Lockheed Martin receiving $4.3 billion. These contracts include missiles for Poland, the Netherlands, Japan, and Finland under Foreign Military Sales agreements. PEO Missiles and Space oversees JASSM and LRASM acquisition activities, working with international partners to coordinate production schedules and capability delivery timelines.
+
+INTEGRATED AIR AND MISSILE DEFENSE
+
+Patriot Advanced Capability-3 (PAC-3) Program
+
+The Patriot Advanced Capability-3 Missile Segment Enhancement (PAC-3 MSE) provides the Army with advanced air and missile defense capability against tactical ballistic missiles, cruise missiles, hypersonic threats, and aircraft. In July 2024, PEO Missiles and Space and Army Contracting Command – Redstone Arsenal executed a $4.5 billion multiyear contract awarded to Lockheed Martin for 870 PAC-3 MSE missiles and associated hardware.
+
+On October 29, 2024, the Army awarded Lockheed Martin a contract modification valued at $752.3 million to increase the annual PAC-3 MSE maximum production rate from 550 missiles to 650 missiles annually. This expansion responds to increased international demand and urgent operational requirements from EUCOM, CENTCOM, and INDOPACOM combatant commands, where ballistic and cruise missile threats continue to intensify.
+
+Program Executive Officer Missiles and Space, Major General Frank Lozano, identified PAC-3 MSE as a key component of the Army's modernized Integrated Air and Missile Defense architecture. The missile utilizes hit-to-kill technology, employing kinetic energy to destroy incoming threats through direct impact rather than proximity warhead detonation. This approach provides enhanced lethality against hardened ballistic missile warheads and maneuvering cruise missiles.
+
+In November 2024, Lockheed Martin successfully demonstrated PAC-3 MSE integration with Raytheon's Lower Tier Air and Missile Defense Sensor (LTAMDS) radar system. The LTAMDS radar was developed by Raytheon Technologies to replace aging Patriot radar systems with modern active electronically scanned array technology. During testing at White Sands Missile Range, the integrated system successfully defeated an advanced tactical ballistic missile target, validating software updates designed to counter evolving threat capabilities.
+
+PAC-3 MSE also demonstrated successful integration with the Aegis Weapon System in 2024. Testing at White Sands Missile Range showed PAC-3 MSE launching from a Mark 70 Payload Delivery System vertical launching system, typically associated with naval applications. This integration effort supports the Joint All Domain Command and Control concept, enabling different services to share sensor data and weapons across traditional domain boundaries.
+
+The Patriot system depends on multiple contractors beyond Lockheed Martin for missile production and Raytheon for radar development. L3Harris Technologies supplies guidance components and mission processors that interface with the PAC-3 MSE seeker system. The missile integrates with the Patriot system's command and control software, which coordinates multi-missile engagements against complex raid scenarios involving simultaneous threats from multiple vectors.
+
+STRATEGIC DETERRENCE SYSTEMS
+
+Columbia-Class Ballistic Missile Submarine Program
+
+The Columbia-class submarine program represents the Navy's highest acquisition priority, designed to replace the aging Ohio-class ballistic missile submarine fleet. General Dynamics Electric Boat serves as prime contractor and lead design yard, awarded in March 2016. The program plans to construct twelve Columbia-class submarines, with the first vessel, District of Columbia (SSBN-826), currently under construction at Groton, Connecticut.
+
+As of late 2024, SSBN-826 is approximately 60 percent complete. However, Matt Sermon, executive director of PEO Submarines' strategic submarines program office, acknowledged that construction is tracking to 96 months instead of the originally contracted 84-month timeline. An April 2024 delivery review ordered by Navy Secretary Carlos Del Toro projects SSBN-826 will be between 12 and 16 months late, though Navy leadership maintains commitment to having the submarine on patrol in 2030.
+
+Huntington Ingalls Industries (HII) Newport News Shipbuilding supports Columbia-class construction by manufacturing the stern sections at facilities in Newport News, Virginia. In January 2024, HII delivered the first Columbia-class submarine stern to General Dynamics Electric Boat, marking a critical construction milestone. This work-sharing arrangement between Electric Boat and HII distributes construction workload across the submarine industrial base, though supply chain challenges have impacted both facilities.
+
+General Dynamics CEO Phebe Novakovic stated in October 2024 that Electric Boat work on Columbia-class and Virginia-class submarines would slow due to severely impacted deliveries from major component suppliers. These supply chain disruptions have delayed module assembly schedules and increased costs across both submarine programs. In November 2024, the White House Office of Management and Budget requested an additional $1.59 billion to maintain Columbia-class construction schedule integrity.
+
+PEO Submarines oversees all aspects of Columbia-class development, construction, and testing. The program office coordinates with the Strategic Systems Programs office, which manages the Trident II D5LE missile system that Columbia-class submarines will carry. Each Columbia-class submarine will feature 16 missile tubes, compared to 24 tubes on Ohio-class vessels, reflecting improvements in missile capability and submarine stealth characteristics.
+
+The Columbia-class design incorporates an electric drive propulsion system, advanced acoustic quieting technology, and a nuclear reactor core designed to last the life of the submarine without refueling. General Dynamics Electric Boat developed these technologies in partnership with Naval Reactors, Bechtel, and multiple defense industry suppliers. The program depends on successful integration of systems from dozens of subcontractors, including BWX Technologies for reactor components and various suppliers for combat systems, communications equipment, and navigation systems.
+
+END BRIEFING
