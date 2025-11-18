@@ -38,8 +38,14 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Graph API error:", error);
+
+    const isDevMode = process.env.NODE_ENV === "development";
+    const errorMessage = isDevMode && error instanceof Error
+      ? error.message
+      : "Failed to retrieve graph data";
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

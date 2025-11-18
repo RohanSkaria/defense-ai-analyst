@@ -97,8 +97,14 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Insights API error:", error);
+
+    const isDevMode = process.env.NODE_ENV === "development";
+    const errorMessage = isDevMode && error instanceof Error
+      ? error.message
+      : "Failed to retrieve insights";
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

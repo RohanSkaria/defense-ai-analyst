@@ -146,7 +146,7 @@ export class PostgresGraphStore {
    */
   async traverse(startId: string, maxHops: number): Promise<TraversalResult> {
     const visitedNodes = new Set<string>([startId]);
-    const visitedEdges = new Set<string>();
+    const visitedEdges = new Map<string, GraphEdge>();
     const queue: Array<{ nodeId: string; depth: number }> = [{ nodeId: startId, depth: 0 }];
 
     while (queue.length > 0) {
@@ -162,8 +162,17 @@ export class PostgresGraphStore {
         .where(eq(relationships.sourceEntity, current.nodeId));
 
       for (const edge of outgoing) {
-        const edgeId = `${edge.sourceEntity}-${edge.relation}-${edge.targetEntity}`;
-        visitedEdges.add(edgeId);
+        // Use JSON serialization as key to handle entity names with special characters
+        const edgeKey = JSON.stringify([edge.sourceEntity, edge.relation, edge.targetEntity]);
+
+        if (!visitedEdges.has(edgeKey)) {
+          visitedEdges.set(edgeKey, {
+            source: edge.sourceEntity,
+            target: edge.targetEntity,
+            relation: edge.relation as RelationType,
+            confidence: edge.confidence,
+          });
+        }
 
         if (!visitedNodes.has(edge.targetEntity)) {
           visitedNodes.add(edge.targetEntity);
@@ -177,8 +186,17 @@ export class PostgresGraphStore {
         .where(eq(relationships.targetEntity, current.nodeId));
 
       for (const edge of incoming) {
-        const edgeId = `${edge.sourceEntity}-${edge.relation}-${edge.targetEntity}`;
-        visitedEdges.add(edgeId);
+        // Use JSON serialization as key to handle entity names with special characters
+        const edgeKey = JSON.stringify([edge.sourceEntity, edge.relation, edge.targetEntity]);
+
+        if (!visitedEdges.has(edgeKey)) {
+          visitedEdges.set(edgeKey, {
+            source: edge.sourceEntity,
+            target: edge.targetEntity,
+            relation: edge.relation as RelationType,
+            confidence: edge.confidence,
+          });
+        }
 
         if (!visitedNodes.has(edge.sourceEntity)) {
           visitedNodes.add(edge.sourceEntity);
@@ -196,30 +214,8 @@ export class PostgresGraphStore {
       }
     }
 
-    // Collect edges
-    const edges: GraphEdge[] = [];
-    for (const edgeId of visitedEdges) {
-      const [source, relation, target] = edgeId.split('-');
-      const result = await this.db.select()
-        .from(relationships)
-        .where(
-          and(
-            eq(relationships.sourceEntity, source),
-            eq(relationships.relation, relation),
-            eq(relationships.targetEntity, target)
-          )
-        )
-        .limit(1);
-
-      if (result.length > 0) {
-        edges.push({
-          source: result[0].sourceEntity,
-          target: result[0].targetEntity,
-          relation: result[0].relation as RelationType,
-          confidence: result[0].confidence,
-        });
-      }
-    }
+    // Return edges directly from Map
+    const edges = Array.from(visitedEdges.values());
 
     return { nodes, edges };
   }
